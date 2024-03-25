@@ -1,0 +1,36 @@
+name: KubeSec Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security_scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # If working with Helm charts, install Helm
+    - name: Install Helm
+      run: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+
+    # Generate Kubernetes manifests from Helm chart (skip this step if you have plain Kubernetes YAML files)
+    - name: Generate Kubernetes manifests from Helm chart
+      run: |
+        helm template my-release my-chart/ > deployment.yaml
+
+    # Scan with KubeSec
+    - name: KubeSec Security Scan
+      uses: controlplaneio/kubesec-action@master
+      with:
+        file: deployment.yaml
+        # Use this line if you want to scan a specific directory: directory: './k8s'
+        # Or scan all YAML files in the repository: '*.yaml'
