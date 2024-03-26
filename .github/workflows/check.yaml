@@ -41,6 +41,6 @@ jobs:
 
     - name: Scan Kubernetes YAML file with KubeSec
       run: |
-       kubesec scan .github/workflows/Deploy.yaml
+       kubesec scan Deploy.yaml
 
   
