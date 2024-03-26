@@ -34,6 +34,13 @@ jobs:
        # file: Deploy.yaml
         # Use this line if you want to scan a specific directory: directory: './k8s'
         # Or scan all YAML files in the repository: '*.yaml'
-    - name: KubeSec Security Scan
-      run: docker run --rm -v "${{ github.workspace }}:/work" aquasec/kubesec:latest scan /work/Deploy.yaml
+    - name: Install KubeSec
+      run: |
+        curl -sSL https://github.com/controlplaneio/kubesec/releases/download/v2.11.2/kubesec_linux_amd64.tar.gz | tar xz
+        sudo mv kubesec /usr/local/bin/
+
+    - name: Scan Kubernetes YAML file with KubeSec
+      run: |
+       kubesec scan .github/workflows/Deploy.yaml
+
   
