@@ -29,7 +29,7 @@ jobs:
 
     # Scan with KubeSec
     - name: KubeSec Security Scan
-      uses: controlplaneio/kubesec-action@master
+      uses: controlplaneio/kubesec-action@main
       with:
         file: Deploy.yaml
         # Use this line if you want to scan a specific directory: directory: './k8s'
