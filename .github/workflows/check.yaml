@@ -25,7 +25,7 @@ jobs:
     # Generate Kubernetes manifests from Helm chart (skip this step if you have plain Kubernetes YAML files)
     - name: Generate Kubernetes manifests from Helm chart
       run: |
-        helm template my-release my-chart/ > Deploy.yaml
+        helm template my-release my-chart/ > deployment.yaml
 
     # Scan with KubeSec
     - name: KubeSec Security Scan
