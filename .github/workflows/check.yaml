@@ -57,6 +57,6 @@ jobs:
           ```
           ${{ steps.kubesec_scan.outputs.result }}
           ```
-        token: ${{ secrets.SECGITHUB_TOKEN }} # Using the GitHub token
+        token: ${{ secrets.GITHUB_TOKEN }} # Using the GitHub token
 
   
