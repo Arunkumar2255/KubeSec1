@@ -47,16 +47,30 @@ jobs:
         kubesec scan Deploy.yaml || true
       id: kubesec_scan
 
-    # Post the result as a comment (example)
+    - name: Run KubeSec Security Scan
+      id: kubesec_scan
+      run: |
+        # Your command to run the KubeSec scan
+        # For demonstration, let's assume we're outputting the results to a file named 'kubesec-results.txt'
+        # e.g., kubesec scan Deploy.yaml > kubesec-results.txt
+        echo "Placeholder for KubeSec scan command"
+      
+      # This next step would typically process the scan results and set an output
+      # This example assumes the results are stored in 'kubesec-results.txt'
+      # You might need to adjust this to your actual setup
+    - name: Prepare scan result
+      run: echo "::set-output name=result::$(cat kubesec-results.txt)"
+      id: scan_results
+
     - name: Post scan result as a comment
-      if: always()
       uses: peter-evans/commit-comment@v1
       with:
-        body: |
-          KubeSec Security Scan Results:
+        body: KubeSec Security Scan Results:
           ```
-          ${{ steps.kubesec_scan.outputs.result }}
+          ${{ steps.scan_results.outputs.result }}
           ```
-        token: ${{ secrets.GITHUB_TOKEN }} # Using the GitHub token
+        token: ${{ secrets.YOUR_PAT_SECRET_NAME }}
+        repository: Arunkumar2255/KubeSec1
+
 
   
