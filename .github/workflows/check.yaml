@@ -65,12 +65,16 @@ jobs:
     - name: Post scan result as a comment
       uses: peter-evans/commit-comment@v1
       with:
-        body: KubeSec Security Scan Results:
-          ```
-          ${{ steps.scan_results.outputs.result }}
-          ```
-        token: ${{ secrets.YOUR_PAT_SECRET_NAME }}
-        repository: Arunkumar2255/KubeSec1
+       body: |
+         KubeSec Security Scan Results:
+         ```
+         ${{ steps.scan_results.outputs.result }}
+         ```
+       token: ${{ secrets.YOUR_PAT_SECRET_NAME }}
+       repository: Arunkumar2255/KubeSec1
+
+
+
 
     
 
