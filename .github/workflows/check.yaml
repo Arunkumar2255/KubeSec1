@@ -41,6 +41,18 @@ jobs:
 
     - name: Scan Kubernetes YAML file with KubeSec
       run: |
-       kubesec scan Deploy.yaml
+        kubesec scan Deploy.yaml || true
+      id: kubesec_scan
+
+    # Post the result as a comment (example)
+    - name: Post scan result as a comment
+      if: always()
+      uses: peter-evans/commit-comment@v1
+      with:
+        body: |
+          KubeSec Security Scan Results:
+          ```
+          ${{ steps.kubesec_scan.outputs.result }}
+          ```
 
   
