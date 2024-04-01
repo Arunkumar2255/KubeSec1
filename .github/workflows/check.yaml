@@ -25,53 +25,42 @@ jobs:
         chmod 700 get_helm.sh
         ./get_helm.sh
 
-    # Generate Kubernetes manifests from Helm chart (skip this step if you have plain Kubernetes YAML files)
-   # - name: Generate Kubernetes manifests from Helm chart
-    #  run: |
-    #    helm template my-release my-chart/ > deployment.yaml
-
-    # Scan with KubeSec
-   # - name: KubeSec Security Scan
-   #   uses: controlplaneio/kubesec-action@main
-   #   with:
-       # file: Deploy.yaml
-        # Use this line if you want to scan a specific directory: directory: './k8s'
-        # Or scan all YAML files in the repository: '*.yaml'
+    # Install KubeSec
     - name: Install KubeSec
       run: |
         curl -sSL https://github.com/controlplaneio/kubesec/releases/download/v2.11.2/kubesec_linux_amd64.tar.gz | tar xz
         sudo mv kubesec /usr/local/bin/
 
+    # Scan Kubernetes YAML file with KubeSec and allow the workflow to continue regardless of the scan's outcome
     - name: Scan Kubernetes YAML file with KubeSec
       run: |
         kubesec scan Deploy.yaml || true
       id: kubesec_scan
 
+    # Placeholder for processing scan results (if necessary)
     - name: Run KubeSec Security Scan
-      id: kubesec_scan
+      id: kubesec_scan_process  # Changed ID to ensure uniqueness
       run: |
-        # Your command to run the KubeSec scan
-        # For demonstration, let's assume we're outputting the results to a file named 'kubesec-results.txt'
-        # e.g., kubesec scan Deploy.yaml > kubesec-results.txt
+        # Placeholder command for demonstration purposes
         echo "Placeholder for KubeSec scan command"
       
-      # This next step would typically process the scan results and set an output
-      # This example assumes the results are stored in 'kubesec-results.txt'
-      # You might need to adjust this to your actual setup
+    # Prepare scan result for posting as a comment
     - name: Prepare scan result
       run: echo "::set-output name=result::$(cat kubesec-results.txt)"
       id: scan_results
 
+    # Post scan result as a comment on the commit or pull request
     - name: Post scan result as a comment
       uses: peter-evans/commit-comment@v1
       with:
-       body: |
-         KubeSec Security Scan Results:
-         ```
-         ${{ steps.scan_results.outputs.result }}
-         ```
-       token: ${{ secrets.YOUR_PAT_SECRET_NAME }}
-       repository: Arunkumar2255/KubeSec1
+        body: |
+          KubeSec Security Scan Results:
+          ```
+          ${{ steps.scan_results.outputs.result }}
+          ```
+        token: ${{ secrets.YOUR_PAT_SECRET_NAME }}
+        repository: Arunkumar2255/KubeSec1
+
 
 
 
