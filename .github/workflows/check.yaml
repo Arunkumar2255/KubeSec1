@@ -24,14 +24,14 @@ jobs:
       - name: Kubesec scan
         continue-on-error: true
         run: |
-          kubesec scan kubse/demo.yml --format json > report.json
+          kubesec scan KubeSec1/kubse/demo.yml --format json > report.json
           if [ $? -ne 0 ]; then
             exit 1
           fi
 
       - name: Read report
         run: |
-          python3 kubse/main.py
+          python3 KubeSec1/kubse/main.py
 
 
 
