@@ -1,65 +1,37 @@
-name: KubeSec Security Scan
+name: Test Kubesec
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-permissions:
-  issues: write
-  pull-requests: write
+    branches: [main]
 
 jobs:
-  security_scan:
-    runs-on: ubuntu-latest
+  lint:
+    name: Lint
+    runs-on: ubuntu-20.04
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    # If working with Helm charts, install Helm
-    - name: Install Helm
-      run: |
-        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-        chmod 700 get_helm.sh
-        ./get_helm.sh
+      - name: Kubesec Download
+        run: |
+          wget https://github.com/controlplaneio/kubesec/releases/download/v2.14.0/kubesec_linux_amd64.tar.gz
+          tar -xvf kubesec_linux_amd64.tar.gz
+          chmod +x kubesec
+          sudo mv kubesec /usr/local/bin
+          ls
 
-    # Install KubeSec
-    - name: Install KubeSec
-      run: |
-        curl -sSL https://github.com/controlplaneio/kubesec/releases/download/v2.11.2/kubesec_linux_amd64.tar.gz | tar xz
-        sudo mv kubesec /usr/local/bin/
+      - name: Kubesec scan
+        continue-on-error: true
+        run: |
+          kubesec scan kubse/demo.yml --format json > report.json
+          if [ $? -ne 0 ]; then
+            exit 1
+          fi
 
-    # Scan Kubernetes YAML file with KubeSec and allow the workflow to continue regardless of the scan's outcome
-    - name: Scan Kubernetes YAML file with KubeSec
-      run: |
-        kubesec scan Deploy.yaml || true
-      id: kubesec_scan
-
-    # Placeholder for processing scan results (if necessary)
-    - name: Run KubeSec Security Scan
-      id: kubesec_scan_process  # Changed ID to ensure uniqueness
-      run: |
-        # Placeholder command for demonstration purposes
-        echo "Placeholder for KubeSec scan command"
-      
-    # Prepare scan result for posting as a comment
-    - name: Prepare scan result
-      run: echo "::set-output name=result::$(cat kubesec-results.txt)"
-      id: scan_results
-
-    # Post scan result as a comment on the commit or pull request
-    - name: Post scan result as a comment
-      uses: peter-evans/commit-comment@v1
-      with:
-        body: |
-          KubeSec Security Scan Results:
-          ```
-          ${{ steps.scan_results.outputs.result }}
-          ```
-        token: ${{ secrets.YOUR_PAT_SECRET_NAME }}
-        repository: Arunkumar2255/KubeSec1
+      - name: Read report
+        run: |
+          python3 kubse/main.py
 
 
 
