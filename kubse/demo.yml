@@ -10,3 +10,6 @@ spec:
       image: nginx
       ports:
         - containerPort: 80
+         securityContext:
+         privileged: false
+         runAsNonRoot: true
