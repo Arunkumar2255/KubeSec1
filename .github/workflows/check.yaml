@@ -31,7 +31,7 @@ jobs:
 
       - name: Read report
         run: |
-          python3 kubse/main.py
+          python3 KubeSec1/kubse/main.py
 
 
 
